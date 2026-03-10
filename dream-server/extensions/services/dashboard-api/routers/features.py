@@ -4,7 +4,8 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from config import FEATURES, SERVICES
+import os
+from config import FEATURES, GPU_BACKEND, SERVICES
 from gpu import get_gpu_info, get_gpu_tier
 from models import GPUInfo
 from security import verify_api_key
@@ -17,6 +18,15 @@ def calculate_feature_status(feature: dict, services: list, gpu_info: Optional[G
     gpu_vram_gb = (gpu_info.memory_total_mb / 1024) if gpu_info else 0
     gpu_vram_used_gb = (gpu_info.memory_used_mb / 1024) if gpu_info else 0
     gpu_vram_free_gb = gpu_vram_gb - gpu_vram_used_gb
+
+    # On Apple Silicon, when HOST_CHIP is missing (get_gpu_info_apple returned None),
+    # fall back to HOST_RAM_TOTAL_GB. Unified memory = VRAM on Apple Silicon.
+    if gpu_vram_gb == 0 and GPU_BACKEND == "apple":
+        try:
+            gpu_vram_gb = float(os.environ.get("HOST_RAM_TOTAL_GB", "0") or "0")
+        except (ValueError, TypeError):
+            pass
+        gpu_vram_free_gb = gpu_vram_gb  # assumes zero current usage; vramFits == vramOk on apple
 
     req = feature["requirements"]
     vram_ok = gpu_vram_gb >= req.get("vram_gb", 0)
@@ -114,6 +124,14 @@ async def api_features(api_key: str = Depends(verify_api_key)):
 
     gpu_vram_gb = (gpu_info.memory_total_mb / 1024) if gpu_info else 0
     memory_type = gpu_info.memory_type if gpu_info else "discrete"
+
+    # Apply Apple Silicon fallback for endpoint-level GPU summary (mirrors calculate_feature_status)
+    if gpu_vram_gb == 0 and GPU_BACKEND == "apple":
+        try:
+            gpu_vram_gb = float(os.environ.get("HOST_RAM_TOTAL_GB", "0") or "0")
+        except (ValueError, TypeError):
+            pass
+        memory_type = "unified"
 
     tier_recommendations = []
     if memory_type == "unified" and gpu_info and gpu_info.gpu_backend == "amd":
