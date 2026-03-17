@@ -222,6 +222,14 @@ else
 filename = ${GGUF_FILE}
 load-on-startup = true
 n-ctx = ${MAX_CONTEXT}
+temp = 0.7
+top-p = 1.0
+top-k = 40
+min-p = 0.01
+repeat-penalty = 1.0
+split-mode = none
+main-gpu = 0
+device = cuda0
 MODELS_INI_EOF
         ai_ok "Generated models.ini for llama-server"
     fi

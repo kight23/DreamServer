@@ -1,0 +1,84 @@
+# Motion Guard Agent Template for IMOU A2-L-D463
+# Purpose: Monitor camera RTSP stream, detect motion, send realtime alerts, generate daily reports
+
+agent:
+  name: motion-guard
+  description: |
+    Autonomous camera monitoring agent for IMOU A2-L-D463.
+    - Realtime motion detection via RTSP stream using OpenCV
+    - Instant alerts (screenshot + timestamp) when motion detected
+    - Daily summary report (events count, clips, heatmap)
+    - Configurable sensitivity and alert channels
+
+  model: local-llama/qwen3.5-4b
+  # Technical model good for script execution and analysis
+
+  system_prompt: |
+    You are Motion Guard, an autonomous security monitoring agent for IMOU A2-L-D463 camera.
+
+    ## CAPABILITIES:
+    1. **Motion Detection**: Process RTSP stream with OpenCV background subtraction
+    2. **Realtime Alerts**: Screenshot + metadata khi detect motion > threshold
+    3. **Daily Reports**: Summary events, total alerts, peak times, video clips
+    4. **Config Management**: Read/edit camera config, sensitivity tuning
+
+    ## WORKFLOW:
+    - START: `python agents/tools/motion_detector.py --mode=continuous`
+    - ALERT: Save screenshot/log → notify (Telegram/email)
+    - REPORT: Cron `python agents/tools/daily_report.py` lúc 23:59
+
+    ## CAMERA SPEC:
+    RTSP: rtsp://admin:L238A4A4@192.168.1.199:554/cam/realmonitor?channel=1&subtype=0
+
+    ## TOOLS USAGE:
+    - `read config/motion-guard/config.yaml` → Get settings
+    - `exec python agents/tools/motion_detector.py [args]` → Run detection
+    - `write alerts/` → Save screenshots/logs
+    - Use precise commands, monitor CPU/GPU usage
+
+    Always confirm before starting continuous monitoring. Report status clearly.
+
+  tools:
+    - read     # Config files, logs
+    - write    # Alert screenshots, reports
+    - edit     # Config updates
+    - exec     # Run motion_detector.py và daily_report.py
+
+  validation:
+    test_prompts:
+      - \"Start motion monitoring for 30 seconds and report\"
+      - \"Generate a sample daily report\"
+      - \"Check camera connection status\"
+
+    success_criteria:
+      - Successfully connects to RTSP stream
+      - Detects motion in test footage
+      - Generates alert screenshot
+      - Creates structured daily report JSON
+
+  usage:
+    import: \"agents/templates/motion-guard.yaml\"
+    # In OpenClaw UI/CLI:
+    # /agent load motion-guard
+    # motion-guard: \"Start continuous monitoring\"
+
+  example_workflows:
+    - name: Realtime Monitoring
+      trigger: \"Start motion monitoring\"
+      steps:
+        - Read config
+        - exec motion_detector.py --mode=continuous
+        - Monitor logs/alerts
+
+    - name: Daily Report
+      trigger: \"Generate daily report\"
+      steps:
+        - exec daily_report.py
+        - write reports/daily-YYYY-MM-DD.json
+
+  notes:
+    - Requires opencv-python, numpy (install via exec pip nếu cần)
+    - Test RTSP connection first: ffplay rtsp://...
+    - Sensitivity tuning in config.yaml (threshold=25px change)
+    - Alerts saved to ./data/openclaw/workspace/alerts/
+    - Daily reports to ./data/openclaw/workspace/reports/

@@ -1,0 +1,40 @@
+# Motion Guard Configuration - IMOU A2-L-D463 + Email Alerts
+
+camera:
+  rtsp_url: \"rtsp://admin:L238A4A4@192.168.1.199:554/cam/realmonitor?channel=1&subtype=0\"
+  name: \"IMOU A2-L-D463 Front Door\"
+  width: 640
+  height: 480
+  fps: 15
+
+motion_detection:
+  threshold: 25          # Pixel change (10=high sensitivity, 50=low)
+  min_area: 500         # Min motion blob size px
+  cooldown: 30          # Sec between alerts
+  sensitivity: \"medium\"
+
+alerts:
+  enabled: true
+  channel: \"email\"     # email (user choice)
+  # SMTP Email Config (update these):
+  smtp_server: \"smtp.gmail.com\"     # or your SMTP
+  smtp_port: 587
+  smtp_user: \"your-email@gmail.com\"
+  smtp_password: \"your-app-password\"  # Gmail App Password
+  email_to: \"alert@yourdomain.com\"
+  email_from: \"motion-guard@dreamserver.local\"
+  screenshot_dir: \"workspace/alerts\"
+  clip_duration: 10
+
+reports:
+  daily_cron: \"59 23 * * *\"     # 23:59 daily
+  report_dir: \"workspace/reports\"
+  retention_days: 30
+  email_report: true
+
+logging:
+  level: \"INFO\"
+  log_dir: \"workspace/logs\"
+
+# OpenClaw workspace paths (relative)
+workspace_base: \"data/openclaw/workspace\"

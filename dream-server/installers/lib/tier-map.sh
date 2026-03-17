@@ -50,11 +50,11 @@ resolve_tier_config() {
             ;;
         1)
             TIER_NAME="Entry Level"
-            LLM_MODEL="qwen3-8b"
-            GGUF_FILE="Qwen3-8B-Q4_K_M.gguf"
-            GGUF_URL="https://huggingface.co/unsloth/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf"
-            GGUF_SHA256="120307ba529eb2439d6c430d94104dabd578497bc7bfe7e322b5d9933b449bd4"
-            MAX_CONTEXT=16384
+            LLM_MODEL="qwen3.5-4b"
+            GGUF_FILE="Qwen3.5-4B-Q4_K_M.gguf"
+            GGUF_URL="https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf"
+            GGUF_SHA256="00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"
+            MAX_CONTEXT=8912
             ;;
         2)
             TIER_NAME="Prosumer"
@@ -95,7 +95,7 @@ tier_to_model() {
         NV_ULTRA)   echo "qwen3-coder-next" ;;
         SH_LARGE)   echo "qwen3-coder-next" ;;
         SH_COMPACT|SH) echo "qwen3-30b-a3b" ;;
-        1|T1)       echo "qwen3-8b" ;;
+        1|T1)       echo "qwen3.5-4b" ;;
         2|T2)       echo "qwen3-8b" ;;
         3|T3)       echo "qwen3-14b" ;;
         4|T4)       echo "qwen3-30b-a3b" ;;

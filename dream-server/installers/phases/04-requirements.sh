@@ -22,7 +22,14 @@ chapter "REQUIREMENTS CHECK"
 
 REQUIREMENTS_MET=true
 TIER_RANK="$(tier_rank "$TIER")"
-
+# Load service registry to ensure SERVICE_PORTS is defined (prevents unbound var)
+if [[ -f "${SCRIPT_DIR}/lib/service-registry.sh" ]]; then
+    . "${SCRIPT_DIR}/lib/service-registry.sh"
+    sr_load  # Populate the arrays
+else
+    # Fallback defaults if registry missing
+    declare -A SERVICE_PORTS=([llama-server]=8080 [open-webui]=3000 [whisper]=9000 [tts]=8880 [n8n]=5678 [qdrant]=6333)
+fi
 # Capability-aware preflight checks
 if [[ -x "$SCRIPT_DIR/scripts/preflight-engine.sh" ]]; then
     PREFLIGHT_ENV="$("$SCRIPT_DIR/scripts/preflight-engine.sh" \

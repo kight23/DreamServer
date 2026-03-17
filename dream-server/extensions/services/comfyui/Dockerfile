@@ -28,9 +28,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ---------------------------------------------------------------------------
 # Layer 2: PyTorch + CUDA 12.8 (Blackwell sm_120 support)
 # ---------------------------------------------------------------------------
-RUN pip3 install --no-cache-dir \
-        torch torchvision torchaudio \
-        --index-url https://download.pytorch.org/whl/cu128
+RUN pip3 install \
+        torch \
+        --index-url https://download.pytorch.org/whl/cu128 --default-timeout=100
+RUN pip3 install \
+        torchvision \
+        --index-url https://download.pytorch.org/whl/cu128 --default-timeout=100
+RUN pip3 install \
+        torchaudio \
+        --index-url https://download.pytorch.org/whl/cu128 --default-timeout=100
 
 # ---------------------------------------------------------------------------
 # Layer 3: ComfyUI from source (pinned to v0.16.4)
