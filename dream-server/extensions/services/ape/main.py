@@ -43,7 +43,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import yaml
-from fastapi import FastAPI, Request, HTTPException, Header
+from fastapi import FastAPI, Request, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -273,8 +273,7 @@ async def health():
 
 
 @app.post("/verify", response_model=VerifyResponse)
-async def verify(req: VerifyRequest, request: Request):
-    await verify_api_key(request)
+async def verify(req: VerifyRequest, request: Request, api_key: str = Depends(verify_api_key)):
     policy = load_policy()
     decision_id = f"{int(time.time() * 1000)}-{secrets.token_hex(8)}"
 
@@ -327,10 +326,8 @@ async def verify(req: VerifyRequest, request: Request):
 
 
 @app.get("/audit")
-async def audit(last_n: int = 50, x_api_key: Optional[str] = Header(None)):
+async def audit(last_n: int = 50, api_key: str = Depends(verify_api_key)):
     """Return the last N audit log entries."""
-    if API_KEY and x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid API key")
     if not AUDIT_LOG.exists():
         return {"entries": []}
     try:
@@ -363,7 +360,7 @@ async def audit(last_n: int = 50, x_api_key: Optional[str] = Header(None)):
 
 
 @app.get("/policy")
-async def policy():
+async def policy(api_key: str = Depends(verify_api_key)):
     """Return the active policy (args not shown for security)."""
     p = load_policy()
     return {"version": p.get("version", 1),
@@ -373,7 +370,7 @@ async def policy():
 
 
 @app.get("/metrics")
-async def metrics():
+async def metrics(api_key: str = Depends(verify_api_key)):
     return {"decisions": _decision_counts,
             "total": sum(_decision_counts.values())}
 
