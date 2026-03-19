@@ -269,8 +269,11 @@ MODELS_INI_EOF
     ai "I'm bringing systems online. You can breathe."
     echo ""
     compose_ok=false
-    # Force-rebuild locally-built images so re-installs never serve stale code
-    $DOCKER_COMPOSE_CMD "${COMPOSE_FLAGS_ARR[@]}" build --no-cache dashboard-api dashboard >> "$LOG_FILE" 2>&1 || true
+    # Build locally-built images individually so one failure doesn't block the rest
+    for _svc in dashboard dashboard-api comfyui ape token-spy privacy-shield; do
+        $DOCKER_COMPOSE_CMD "${COMPOSE_FLAGS_ARR[@]}" build --no-cache "$_svc" >> "$LOG_FILE" 2>&1 || true
+    done
+    # Start everything — --no-build skips services whose images failed to build
     $DOCKER_COMPOSE_CMD "${COMPOSE_FLAGS_ARR[@]}" up -d --no-build >> "$LOG_FILE" 2>&1 &
     compose_pid=$!
     if spin_task $compose_pid "Launching containers..."; then
