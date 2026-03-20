@@ -129,7 +129,7 @@ if $OLLAMA_RUNNING; then
     ai_warn "Ollama is running (PID ${OLLAMA_PID}) and may conflict with Dream Server."
     ai "  Both use port 11434/8080. Ollama will shadow llama-server."
     if ! $NON_INTERACTIVE; then
-        read -r -p "  Stop Ollama for this session? [Y/n] " ollama_choice
+        read -r -p "  Stop Ollama for this session? [Y/n] " ollama_choice < /dev/tty
         if [[ ! "$ollama_choice" =~ ^[nN] ]]; then
             kill "$OLLAMA_PID" 2>/dev/null || true
             sleep 2
@@ -225,7 +225,7 @@ if ! $NON_INTERACTIVE && ! $ALL_FEATURES && ! $DRY_RUN; then
     echo -e "  ${WHT}[3]${NC} Custom       -- Choose individually"
     echo ""
 
-    read -r -p "  Selection (1/2/3): " feature_choice
+    read -r -p "  Selection (1/2/3): " feature_choice < /dev/tty
     case "${feature_choice:-1}" in
         1)
             ENABLE_VOICE=true; ENABLE_WORKFLOWS=true
@@ -236,13 +236,13 @@ if ! $NON_INTERACTIVE && ! $ALL_FEATURES && ! $DRY_RUN; then
             ENABLE_RAG=false; ENABLE_OPENCLAW=false
             ;;
         3)
-            read -r -p "  Enable Voice (Whisper + Kokoro)? [y/N] " yn
+            read -r -p "  Enable Voice (Whisper + Kokoro)? [y/N] " yn < /dev/tty
             [[ "$yn" =~ ^[yY] ]] && ENABLE_VOICE=true
-            read -r -p "  Enable Workflows (n8n)?           [y/N] " yn
+            read -r -p "  Enable Workflows (n8n)?           [y/N] " yn < /dev/tty
             [[ "$yn" =~ ^[yY] ]] && ENABLE_WORKFLOWS=true
-            read -r -p "  Enable RAG (Qdrant + embeddings)? [y/N] " yn
+            read -r -p "  Enable RAG (Qdrant + embeddings)? [y/N] " yn < /dev/tty
             [[ "$yn" =~ ^[yY] ]] && ENABLE_RAG=true
-            read -r -p "  Enable OpenClaw (AI agents)?      [y/N] " yn
+            read -r -p "  Enable OpenClaw (AI agents)?      [y/N] " yn < /dev/tty
             [[ "$yn" =~ ^[yY] ]] && ENABLE_OPENCLAW=true
             ;;
         *)

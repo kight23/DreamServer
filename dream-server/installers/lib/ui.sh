@@ -374,7 +374,7 @@ show_install_menu() {
     echo -e "  ${BGRN}[3]${NC} Custom"
     echo "      Choose exactly what you want"
     echo ""
-    read -p "  Select an option [1]: " -r INSTALL_CHOICE
+    read -p "  Select an option [1]: " -r INSTALL_CHOICE < /dev/tty
     INSTALL_CHOICE="${INSTALL_CHOICE:-1}"
     echo ""
     case "$INSTALL_CHOICE" in

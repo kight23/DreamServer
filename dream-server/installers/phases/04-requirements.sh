@@ -213,7 +213,7 @@ if $OLLAMA_RUNNING; then
     ai_warn "Ollama is running (PID ${OLLAMA_PID}) and may conflict with Dream Server."
     ai "  Note: this is usually not a port collision. Open WebUI may auto-discover Ollama (11434) and prefer it over the local llama-server (8080)."
     if $INTERACTIVE && ! $DRY_RUN; then
-        read -r -p "  Stop Ollama for this session? [Y/n] " ollama_choice
+        read -r -p "  Stop Ollama for this session? [Y/n] " ollama_choice < /dev/tty
         if [[ ! "$ollama_choice" =~ ^[nN] ]]; then
             kill "$OLLAMA_PID" 2>/dev/null || sudo kill "$OLLAMA_PID" 2>/dev/null || true
             sleep 2
@@ -250,7 +250,7 @@ done
 if [[ "$REQUIREMENTS_MET" != "true" ]]; then
     warn "Some requirements not met. Installation may have limited functionality."
     if $INTERACTIVE && ! $DRY_RUN; then
-        read -p "  Continue anyway? [y/N] " -r
+        read -p "  Continue anyway? [y/N] " -r < /dev/tty
         [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
     elif $DRY_RUN; then
         log "[DRY RUN] Would prompt to continue despite unmet requirements"

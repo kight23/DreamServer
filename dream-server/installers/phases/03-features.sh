@@ -22,19 +22,19 @@ if $INTERACTIVE && ! $DRY_RUN; then
 
     # Only show individual feature prompts for Custom installs
     if [[ "${INSTALL_CHOICE:-1}" == "3" ]]; then
-        read -p "  Enable voice (Whisper STT + Kokoro TTS)? [Y/n] " -r
+        read -p "  Enable voice (Whisper STT + Kokoro TTS)? [Y/n] " -r < /dev/tty
         echo
         [[ $REPLY =~ ^[Nn]$ ]] || ENABLE_VOICE=true
 
-        read -p "  Enable n8n workflow automation? [Y/n] " -r
+        read -p "  Enable n8n workflow automation? [Y/n] " -r < /dev/tty
         echo
         [[ $REPLY =~ ^[Nn]$ ]] || ENABLE_WORKFLOWS=true
 
-        read -p "  Enable Qdrant vector database (for RAG)? [Y/n] " -r
+        read -p "  Enable Qdrant vector database (for RAG)? [Y/n] " -r < /dev/tty
         echo
         [[ $REPLY =~ ^[Nn]$ ]] || ENABLE_RAG=true
 
-        read -p "  Enable OpenClaw AI agent framework? [y/N] " -r
+        read -p "  Enable OpenClaw AI agent framework? [y/N] " -r < /dev/tty
         echo
         [[ $REPLY =~ ^[Yy]$ ]] && ENABLE_OPENCLAW=true
     fi
