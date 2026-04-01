@@ -54,7 +54,7 @@ resolve_tier_config() {
             GGUF_FILE="Qwen3.5-4B-Q4_K_M.gguf"
             GGUF_URL="https://huggingface.co/unsloth/Qwen3.5-4B-GGUF/resolve/main/Qwen3.5-4B-Q4_K_M.gguf"
             GGUF_SHA256="00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4"
-            MAX_CONTEXT=8912
+            MAX_CONTEXT=16384
             ;;
         2)
             TIER_NAME="Prosumer"

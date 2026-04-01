@@ -55,7 +55,7 @@ services:
   # Chat UI
   # ============================================
   open-webui:
-    image: ghcr.io/open-webui/open-webui:v0.7.2
+    image: ghcr.io/open-webui/open-webui:v0.8.10
     container_name: dream-webui
     restart: unless-stopped
     depends_on:
